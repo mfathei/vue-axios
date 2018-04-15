@@ -106,7 +106,11 @@
                 };
                 console.log(formData);
                 axios
-                    .post("/users.json", formData)
+                    .post("/signupNewUser?key=AIzaSyBNPfBvsv31ef_tByq0Wu7KyUr5Wv74gQ4", {
+                        email: formData.email,
+                        password: formData.password,
+                        returnSecureToken: true
+                    })
                     .then(res => console.log(res))
                     .catch(error => console.error(error));
             }
