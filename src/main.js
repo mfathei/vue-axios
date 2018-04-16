@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
 import axios from 'axios'
+import Vuelidator from 'vuelidate'
 
 import router from './router'
 import store from './store'
+
+Vue.use(Vuelidator);
 
 axios.defaults.baseURL = 'https://vue-axios-62ced.firebaseio.com';
 // axios.defaults.headers.common['Authorization'] = 'Basic wtrgt4r564gtdgt4';
