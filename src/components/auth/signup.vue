@@ -2,7 +2,7 @@
     <div id="signup">
         <div class="signup-form">
             <form @submit.prevent="onSubmit">
-                <div class="input">
+                <div class="input" :class="{invalid: $v.email.$error}">
                     <label for="email">Mail</label>
                     <input
                             type="email"
@@ -154,6 +154,15 @@
 
     .input.inline input {
         width: auto;
+    }
+
+    .input.invalid input {
+        border: 1px solid red;
+        background-color: lightpink;
+    }
+
+    .input.invalid label {
+        color: red;
     }
 
     .input input:focus {
