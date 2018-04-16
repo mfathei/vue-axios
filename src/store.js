@@ -56,6 +56,7 @@ export default new Vuex.Store({
                     commit('authUser', res.data);
                     commit('saveUser', userData);
                     dispatch('setLogoutTimer', res.data.expiresIn);
+                    router.replace('/dashboard');
                 })
                 .catch(error => console.error(error));
         },
