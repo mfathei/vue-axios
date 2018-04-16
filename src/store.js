@@ -5,8 +5,16 @@ import axios from './axios-auth';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state: {},
-    mutations: {},
+    state: {
+        idToken: '',
+        userId: ''
+    },
+    mutations: {
+        authUser: (state, userData) => {
+            state.idToken = userData.token;
+            state.userId = userData.userId;
+        }
+    },
     actions: {
         login: ({commit}, userData) => {
             axios
@@ -25,7 +33,13 @@ export default new Vuex.Store({
                     password: userData.password,
                     returnSecureToken: true
                 })
-                .then(res => console.log(res))
+                .then(res => {
+                    console.log(res);
+                    commit('authUser', {
+                        token: res.data.idToken,
+                        userId: res.data.localId
+                    });
+                })
                 .catch(error => console.error(error));
         }
     },
