@@ -18,9 +18,17 @@ export default new Vuex.Store({
         },
         saveUser: (state, user) => {
             state.user = user;
+        },
+        clearUserData: (state) => {
+            state.idToken = null;
+            state.userId = null;
+            state.user = null;
         }
     },
     actions: {
+        logout: ({commit}) => {
+            commit('clearUserData');
+        },
         login: ({commit}, userData) => {
             axios
                 .post("/verifyPassword?key=AIzaSyBNPfBvsv31ef_tByq0Wu7KyUr5Wv74gQ4", {
