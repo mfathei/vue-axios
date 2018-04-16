@@ -7,29 +7,15 @@
 </template>
 
 <script>
-    import axios from "../../axios-auth";
 
     export default {
-        data() {
-            return {
-                email: ""
-            };
+        computed: {
+            email: () => {
+                return this.$store.getters.user.email;
+            }
         },
         created() {
-            axios
-                .get("/users.json")
-                .then(res => {
-                    console.log(res);
-                    const data = res.data;
-                    var users = [];
-                    for (let key in data) {
-                        const user = data[key];
-                        user.id = key;
-                        users.push(user);
-                    }
-                    this.email = users[0].email;
-                })
-                .catch(err => console.error(err));
+            this.$store.dispatch('fetchUser');
         }
     };
 </script>
