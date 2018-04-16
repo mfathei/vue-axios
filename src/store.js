@@ -24,13 +24,16 @@ export default new Vuex.Store({
             state.idToken = null;
             state.userId = null;
             state.user = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('expirationDate');
+            localStorage.removeItem('userId');
         }
     },
     actions: {
         setLogoutTimer: ({commit, dispatch}, duration) => {
-          setTimeout(() => {
-              dispatch('logout');
-          }, duration * 1000);
+            setTimeout(() => {
+                dispatch('logout');
+            }, duration * 1000);
         },
         logout: ({commit}) => {
             commit('clearUserData');
@@ -44,6 +47,11 @@ export default new Vuex.Store({
                     returnSecureToken: true
                 })
                 .then(res => {
+                    let now = new Date();
+                    let expirationDate = new Date(now.getTime() + (res.data.expiresIn * 1000));
+                    localStorage.setItem('token', res.data.idToken);
+                    localStorage.setItem('expirationDate', expirationDate);
+                    localStorage.setItem('userId', res.data.localId);
                     console.log(res);
                     commit('authUser', res.data);
                     commit('saveUser', userData);
@@ -59,6 +67,11 @@ export default new Vuex.Store({
                     returnSecureToken: true
                 })
                 .then(res => {
+                    let now = new Date();
+                    let expirationDate = new Date(now.getMilliseconds() + (res.data.expiresIn * 1000));
+                    localStorage.setItem('token', res.data.idToken);
+                    localStorage.setItem('expirationDate', expirationDate);
+                    localStorage.setItem('userId', res.data.localId);
                     console.log(res);
                     commit('authUser', res.data);
                     dispatch('storeUser', userData);
@@ -90,6 +103,24 @@ export default new Vuex.Store({
             globalAxios.post('/users.json?auth=' + state.idToken, userData)
                 .then(res => console.log(res))
                 .catch(err => console.error(err))
+        },
+        tryAutoLogin: ({commit}) => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return;
+            }
+
+            const expirationDate = localStorage.getItem('expirationDate');
+            const now = new Date();
+            if (now >= expirationDate) {
+                return;
+            }
+
+            const userId = localStorage.getItem('userId');
+            commit('authUser', {
+                idToken: token,
+                localId: userId
+            });
         }
     },
     getters: {
