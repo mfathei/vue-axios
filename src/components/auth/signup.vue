@@ -64,7 +64,8 @@
                             <button @click="onDeleteHobby(hobbyInput.id)" type="button">X</button>
 
                         </div>
-                        <p v-if="!$v.hobbyInputs.minLen">You have to add at least {{ $v.hobbyInputs.$params.minLen.min }}
+                        <p v-if="!$v.hobbyInputs.minLen">You have to add at least {{ $v.hobbyInputs.$params.minLen.min
+                            }}
                             hobbies</p>
                         <p v-if="!$v.hobbyInputs.required">Please add hobbies.</p>
                     </div>
@@ -84,6 +85,7 @@
 
 <script>
 
+    import axios from 'axios';
     import {required, email, numeric, minValue, minLength, sameAs, requiredUnless} from 'vuelidate/lib/validators';
 
     export default {
@@ -103,7 +105,12 @@
                 required,
                 email,
                 unique: val => {
-                    return val !== 'test@test.com'
+                    if (val === '') return true;
+                    return axios.get('/users.json?orderBy="email"&equalTo="' + val + '"')
+                        .then(res => {
+                                return Object.keys(res.data).length === 0;
+                            }
+                        )
                 }
             },
             age: {
