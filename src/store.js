@@ -13,8 +13,8 @@ export default new Vuex.Store({
     },
     mutations: {
         authUser: (state, userData) => {
-            state.idToken = userData.token;
-            state.userId = userData.userId;
+            state.idToken = userData.idToken;
+            state.userId = userData.localId;
         },
         saveUser: (state, user) => {
             state.user = user;
@@ -30,6 +30,7 @@ export default new Vuex.Store({
                 })
                 .then(res => {
                     console.log(res);
+                    commit('authUser', res.data);
                     commit('saveUser', userData);
                 })
                 .catch(error => console.error(error));
@@ -43,16 +44,13 @@ export default new Vuex.Store({
                 })
                 .then(res => {
                     console.log(res);
-                    commit('authUser', {
-                        token: res.data.idToken,
-                        userId: res.data.localId
-                    });
+                    commit('authUser', res.data);
                     dispatch('storeUser', userData);
                 })
                 .catch(error => console.error(error));
         },
         fetchUser: ({commit, state}) => {
-            if(!state.idToken){
+            if (!state.idToken) {
                 return;
             }
             globalAxios.get('/users.json?auth=' + state.idToken)
@@ -70,10 +68,10 @@ export default new Vuex.Store({
                 .catch(err => console.error(err));
         },
         storeUser: ({commit, state}, userData) => {
-            if(!state.idToken){
+            if (!state.idToken) {
                 return;
             }
-            globalAxios.post('/users.json?auth=' + state.idToken , userData)
+            globalAxios.post('/users.json?auth=' + state.idToken, userData)
                 .then(res => console.log(res))
                 .catch(err => console.error(err))
         }
