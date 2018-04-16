@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from './axios-auth'
 import globalAxios from 'axios'
+import router from './router'
 
 Vue.use(Vuex);
 
@@ -26,10 +27,16 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        setLogoutTimer: ({commit, dispatch}, duration) => {
+          setTimeout(() => {
+              dispatch('logout');
+          }, duration * 1000);
+        },
         logout: ({commit}) => {
             commit('clearUserData');
+            router.replace('/signin');
         },
-        login: ({commit}, userData) => {
+        login: ({commit, dispatch}, userData) => {
             axios
                 .post("/verifyPassword?key=AIzaSyBNPfBvsv31ef_tByq0Wu7KyUr5Wv74gQ4", {
                     email: userData.email,
@@ -40,6 +47,7 @@ export default new Vuex.Store({
                     console.log(res);
                     commit('authUser', res.data);
                     commit('saveUser', userData);
+                    dispatch('setLogoutTimer', res.data.expiresIn);
                 })
                 .catch(error => console.error(error));
         },
