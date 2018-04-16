@@ -9,7 +9,8 @@
                             id="email"
                             @input="$v.email.$touch()"
                             v-model="email">
-                    <div>{{ $v }}</div>
+                    <p v-if="!$v.email.email">Please provide a valid email address</p>
+                    <p v-if="!$v.email.required">This field must not be empty</p>
                 </div>
                 <div class="input">
                     <label for="age">Your Age</label>
